@@ -126,7 +126,7 @@ abstract class AbstractMySqlRepository implements BaseRepository
      */
     public function delete(Model $model): bool|null
     {
-        $deleted = $this->model->delete;
+        $deleted = $model->delete();
         return $deleted;
     }
 }

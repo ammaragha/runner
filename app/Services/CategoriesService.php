@@ -27,12 +27,16 @@ class CategoriesService implements CRUDServiceInterface, CategoriesServiceInterf
     public function update(int $id, array $inputs)
     {
         $category = $this->categoriesRepo->findById($id);
+        if (!$category)
+            return false;
         return  $this->categoriesRepo->update($category, $inputs);
     }
 
     public function delete(int $id)
     {
         $category = $this->categoriesRepo->findById($id);
+        if (!$category)
+            return false;
         return $this->categoriesRepo->delete($category);
     }
 

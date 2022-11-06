@@ -17,6 +17,15 @@ trait ResponseTrait
     }
 
     /**
+     * Success With MSG
+     */
+    public function succMsg($message = "Done")
+    {
+        return response()->json(['massege' => $message], Response::HTTP_OK);
+    }
+
+
+    /**
      * internal server Error
      */
     public function serverErr($message = "Internal server Error")

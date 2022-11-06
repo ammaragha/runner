@@ -75,7 +75,7 @@ class CategoryController extends Controller
         if ($updated)
             return $this->succMsg("category updated");
         else
-            return $this->badRequest("cant bring update that category, check id");
+            return $this->badRequest("cant  update that category, check id");
     }
 
     /**
@@ -90,6 +90,6 @@ class CategoryController extends Controller
         if ($deleted)
             return $this->succMsg("category deleted");
         else
-            return $this->badRequest("cant bring delete that category, check id");
+            return $this->badRequest("cant delete that category, check id");
     }
 }

@@ -35,4 +35,9 @@ class CategoriesService implements CRUDServiceInterface, CategoriesServiceInterf
         $category = $this->categoriesRepo->findById($id);
         return $this->categoriesRepo->delete($category);
     }
+
+    public function all()
+    {
+        return $this->categoriesRepo->all();
+    }
 }

@@ -33,5 +33,10 @@ interface AuthRepositoryInterface
      * if user is runner prepare 
      * 
      */
-    public function prepareRunner(User $user, array $inputs);
+    public function prepareRunner(array $inputs);
+
+    /**
+     * prepare address data for user
+     */
+    public function prepareAddress(array $inputs);
 }

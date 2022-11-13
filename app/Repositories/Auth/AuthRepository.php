@@ -37,14 +37,20 @@ class AuthRepository implements AuthRepositoryInterface
         $user = DB::transaction(function () use ($inputs) {
             $user = $this->prepareUser($inputs);
             $user->role = isset($inputs['role']) && $inputs['role'] == "runner" ? "runner" : "user";
-
             $user->saveOrFail();
+
+            //phone
+            $user->phones()->create(['phone' => $inputs['phone']]);
+
+            //address
+            $address = $this->prepareAddress($inputs);
+            $user->addresses()->create($address);
 
             //user role as ruuner
             $runner = null;
             if (isset($inputs['role']) && $inputs['role'] == 'runner') {
-                $runner = $this->prepareRunner($user, $inputs);
-                $runner->saveOrFail();
+                $runner = $this->prepareRunner($inputs);
+                $user->runner()->create($runner);
             }
 
             $user->token = $this->generateToken($user);
@@ -59,12 +65,12 @@ class AuthRepository implements AuthRepositoryInterface
         return $user->createToken('api')->plainTextToken;
     }
 
-    public function prepareRunner($user, $inputs)
+    public function prepareRunner($inputs)
     {
-        $runner = new Runner();
-        $runner->cost_per_hour = $inputs['cost_per_hour'];
-        $runner->user_id = $user->id;
-        $runner->category_id = $inputs['category_id'];
+        $runner = [
+            'cost_per_hour' => $inputs['cost_per_hour'],
+            'category_id' => $inputs['category_id']
+        ];
 
         return $runner;
     }
@@ -79,5 +85,21 @@ class AuthRepository implements AuthRepositoryInterface
         $user->gender = $inputs['gender'];
 
         return $user;
+    }
+
+    public function prepareAddress(array $inputs)
+    {
+        $address = [
+            'name' => $inputs['addressName'],
+            'city' => $inputs['city'],
+            'state' => $inputs['state'],
+            'lat' => isset($inputs['lat']) ? $inputs['lat'] : null,
+            'long' => isset($inputs['long']) ? $inputs['long'] : null,
+            'street' => isset($inputs['street']) ? $inputs['street'] : null,
+            'suite' => isset($inputs['suite']) ? $inputs['suite'] : null,
+            'zip' => isset($inputs['zip']) ? $inputs['zip'] : null,
+        ];
+
+        return $address;
     }
 }

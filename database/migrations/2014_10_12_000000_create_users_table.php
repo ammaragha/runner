@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,8 +20,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('gender',['male','famale']);
-            $table->date('birthday');
+            $table->enum('gender',['male','famale'])->default('male');
+            $table->date('birthday')->default(Carbon::now());
             $table->float('rate')->nullable();
             $table->string('about')->nullable();
             $table->enum('role',['admin','user','runner'])->default('user');     

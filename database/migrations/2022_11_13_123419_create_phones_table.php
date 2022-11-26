@@ -16,7 +16,9 @@ return new class extends Migration
         Schema::create('phones', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('phone', 11)->unique();
+            $table->string('phone')->unique();
+            $table->boolean('isVerified')->default(false);
+            $table->boolean('default')->default(false);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();

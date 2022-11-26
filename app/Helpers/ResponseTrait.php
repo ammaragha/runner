@@ -41,4 +41,6 @@ trait ResponseTrait
     {
         return response()->json(['massege' => $message], Response::HTTP_BAD_REQUEST);
     }
+
+   
 }

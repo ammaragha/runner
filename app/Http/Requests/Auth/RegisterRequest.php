@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             "password" => ['required', "min:3", "max:255"],
             "gender" => ['required', "in:male,famale"],
             "birthday" => ['required', 'date'],
-            "phone" => ['required', 'digits:11'],
+            "phone" => ['required','unique:phones,phone'],
             "addressName" => ['required', "min:3", "max:20"],
             "lat" => ['sometimes', 'required'],
             "long" => ['sometimes', 'required'],

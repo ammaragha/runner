@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Auth;
 
+use App\Helpers\TwilioTrait;
+use App\Models\Phone;
 use App\Models\Runner;
 use App\Models\User;
 use Carbon\Carbon;
@@ -9,9 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class AuthRepository implements AuthRepositoryInterface
+class AuthRepository implements AuthRepositoryInterface, OTPInterface
 {
-
+    use TwilioTrait;
     /**
      * Login
      * @param array $cred
@@ -20,8 +22,17 @@ class AuthRepository implements AuthRepositoryInterface
     {
         if (Auth::attempt($cred)) {
             $user = Auth::user();
-            $user->token = $this->generateToken($user);
-            return $user;
+
+            // get his defualt phone
+            $hasVerifiedphone = $user->phones()->where('default', true)->where('isVerified', true)->first();
+
+            if (!$hasVerifiedphone) {
+                Auth::logout();
+                return "notVerified";
+            } else {
+                $user->token = $this->generateToken($user);
+                return $user;
+            }
         } else {
             return false;
         }
@@ -40,7 +51,7 @@ class AuthRepository implements AuthRepositoryInterface
             $user->saveOrFail();
 
             //phone
-            $user->phones()->create(['phone' => $inputs['phone']]);
+            $user->phones()->create(['phone' => $inputs['phone'], 'default' => true]);
 
             //address
             $address = $this->prepareAddress($inputs);
@@ -53,18 +64,37 @@ class AuthRepository implements AuthRepositoryInterface
                 $user->runner()->create($runner);
             }
 
-            $user->token = $this->generateToken($user);
             return $user;
         });
 
         return $user;
     }
 
+    /**
+     * reset password
+     */
+    public function reset(string $phone,  string $password)
+    {
+        $user = Phone::where('phone', $phone)->first()->user();
+        $updated = $user->update([
+            'password' => Hash::make($password)
+        ]);
+
+        return $updated;
+    }
+
+    /**
+     * generate Token for authed user
+     */
     public function generateToken(User $user)
     {
         return $user->createToken('api')->plainTextToken;
     }
 
+
+    /**
+     * prepare Runner data
+     */
     public function prepareRunner($inputs)
     {
         $runner = [
@@ -75,6 +105,9 @@ class AuthRepository implements AuthRepositoryInterface
         return $runner;
     }
 
+    /**
+     * prepare user data
+     */
     public function prepareUser($inputs)
     {
         $user = new User();
@@ -87,6 +120,10 @@ class AuthRepository implements AuthRepositoryInterface
         return $user;
     }
 
+
+    /**
+     * prepare address data
+     */
     public function prepareAddress(array $inputs)
     {
         $address = [
@@ -101,5 +138,32 @@ class AuthRepository implements AuthRepositoryInterface
         ];
 
         return $address;
+    }
+
+    /**
+     * get Phone from Email
+     */
+    public function getPhoneByEmail(string $email)
+    {
+        $user = User::where('email', $email)->first();
+        $phone = $user->phones()->where('default', true)->first();
+        if ($phone)
+            return $phone->phone;
+        else
+            return false;
+    }
+
+    /**
+     * verify phone number
+     */
+    public function verify(string $phone, string $code)
+    {
+        $verifyOTP = $this->verifyOTP($phone, $code);
+        if ($verifyOTP == 'approved') {
+            $updated = Phone::where('phone', $phone)->update(['isVerified' => true]);
+            return $updated;
+        } else {
+            return false;
+        }
     }
 }

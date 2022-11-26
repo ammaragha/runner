@@ -4,7 +4,7 @@ namespace App\Repositories\Auth;
 
 use App\Models\User;
 
-interface AuthRepositoryInterface
+interface AuthRepositoryInterface 
 {
     /**
      * make a Login
@@ -17,6 +17,11 @@ interface AuthRepositoryInterface
      * @param array $inputs
      */
     public function register(array $inputs);
+
+    /**
+     * reset password
+     */
+    public function reset(string $phone,string $password);
 
     /**
      * create Token
@@ -39,4 +44,15 @@ interface AuthRepositoryInterface
      * prepare address data for user
      */
     public function prepareAddress(array $inputs);
+
+    /**
+     * get phone from email
+     */
+    public function getPhoneByEmail(string $email);
+
+    /**
+     * verify
+     */
+    public function verify(string $phone,string $code);
+
 }

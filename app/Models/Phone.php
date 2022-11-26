@@ -11,7 +11,7 @@ class Phone extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable  = [
-        'phone', 'user_id'
+        'phone', 'user_id','isVerified','default'
     ];
 
 

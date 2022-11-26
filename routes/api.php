@@ -18,8 +18,14 @@ use Illuminate\Support\Facades\Route;
 //Auth
 Route::group(['prefix'=>'auth'], function ()
 {
-    Route::post('register',[AuthController::class,'register']);
-    Route::post('login',[AuthController::class,'login']);
+    Route::post('/register',[AuthController::class,'register']);
+    Route::post('/login',[AuthController::class,'login']);
+    Route::post('/getPhoneByEmail',[AuthController::class,'getPhoneByEmail']);
+    Route::post('/sendOTP',[AuthController::class,'sendOTP']);
+    Route::post('/verifyOTP',[AuthController::class,'verifyOTP']);
+    Route::post('/verify',[AuthController::class,'verify']);
+    Route::patch('/reset',[AuthController::class,'reset']);
+
 });
 
 

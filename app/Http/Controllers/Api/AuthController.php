@@ -69,10 +69,9 @@ class AuthController extends Controller
     }
 
     public function sendOTP(SendOTPRequest $request){
-        $email = $request->input('email');
         $phone = $request->input('phone');
 
-        $sendOTP = $this->authRepo->sendOTP($email,$phone);
+        $sendOTP = $this->authRepo->sendOTP($phone);
         if ($sendOTP)
             return $this->succWithData(['phone' => $phone], 'OTP sent successfully');
         else {

@@ -10,12 +10,11 @@ trait TwilioTrait
     /**
      * send OTP
      */
-    public function sendOTP(string $email, string $phone)
+    public function sendOTP(string $phone)
     {
-        $checkPhone = $this->getPhoneByEmail($email);
-        if ($checkPhone == $phone) {
-            $this->twilioService()->verifications
-                ->create($phone, "sms");
+       $sent =  $this->twilioService()->verifications
+        ->create($phone, "sms");
+        if ($sent) { 
             return true;
         } else {
             return false;

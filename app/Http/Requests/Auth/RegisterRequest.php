@@ -27,7 +27,7 @@ class RegisterRequest extends FormRequest
             "name" => ['required', "min:3", "max:20"],
             "email" => ['required', "email", "unique:users,email"],
             "password" => ['required', "min:3", "max:255"],
-            "gender" => ['required', "in:male,famale,other"],
+            "gender" => ['required', "in:male,female,other"],
             "birthday" => ['required', 'date'],
             "phone" => ['required','unique:phones,phone'],
             "addressName" => ["min:3", "max:20"],

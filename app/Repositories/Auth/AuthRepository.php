@@ -127,7 +127,7 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
     public function prepareAddress(array $inputs)
     {
         $address = [
-            'name' => $inputs['addressName'],
+            'name' => isset($inputs['addressName']) ? $inputs['addressName'] : 'home',
             'city' => $inputs['city'],
             'state' => $inputs['state'],
             'lat' => isset($inputs['lat']) ? $inputs['lat'] : null,

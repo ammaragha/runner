@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('gender',['male','famale'])->default('male');
+            $table->enum('gender',['male','famale','other'])->default('male');
             $table->date('birthday')->default(Carbon::now());
             $table->float('rate')->nullable();
             $table->string('about')->nullable();

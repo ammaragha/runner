@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name')->default('home');
             $table->double('lat')->nullable();
             $table->double('long')->nullable();
             $table->string('city',50);

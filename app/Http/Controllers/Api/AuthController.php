@@ -99,7 +99,7 @@ class AuthController extends Controller
 
         $verify = $this->authRepo->verify($phone,$code);
         if ($verify)
-            return $this->succMsg('Phone number successfully verified, tou can login now');
+            return $this->succMsg('Phone number successfully verified, you can login now');
         else {
             return $this->badRequest('Something went wrong');
         }

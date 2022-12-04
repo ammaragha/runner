@@ -27,13 +27,13 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
             $hasVerifiedphone = $user->phone_verified_at;
             if (!$hasVerifiedphone) {
                 Auth::logout();
-                throw new Exception("phone not verified",Response::HTTP_BAD_REQUEST);
+                throw new Exception("phone not verified", Response::HTTP_BAD_REQUEST);
             } else {
                 $user->token = $this->generateToken($user);
                 return $user;
             }
         } else {
-            throw new Exception("email or password incorrect!",Response::HTTP_BAD_REQUEST);
+            throw new Exception("email or password incorrect!", Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -74,7 +74,7 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
         $user = User::where('phone', $phone)->first();
 
         if (!$user)
-            throw new Exception('Phone not exist',Response::HTTP_BAD_REQUEST);
+            throw new Exception('Phone not exist', Response::HTTP_BAD_REQUEST);
         $updated = $user->update([
             'password' => Hash::make($password)
         ]);
@@ -156,6 +156,12 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
      */
     public function verify(string $phone, string $code): bool
     {
+        $isExist = User::where('phone', $phone)->first();
+        if (!$isExist)
+            throw new Exception("phone not Exist", Response::HTTP_BAD_REQUEST);
+        if ($isExist && $isExist->phone_verified_at)
+            throw new Exception("this phone number is verified, you can login now", Response::HTTP_BAD_REQUEST);
+
         $verifyOTP = $this->verifyOTP($phone, $code);
         if ($verifyOTP) {
             $updated = User::where('phone', $phone)->update(['phone_verified_at' => Carbon::now()]);

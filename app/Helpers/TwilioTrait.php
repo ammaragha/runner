@@ -78,10 +78,16 @@ trait TwilioTrait
                 break;
             case 20404:
                 $status = 404;
-                $msg = explode(":", $e->getMessage())[0];
+                $msg = "Code not correct try again " . explode(":", $e->getMessage())[0];
                 break;
             case 20003:
                 $status = 401;
+                break;
+            case 20008:
+                $status = 403;
+                break;
+            case 550 < $e->getCode():
+                $status = 500;
                 break;
             default:
                 break;

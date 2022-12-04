@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Models\Category;
+use App\Models\Service;
 use App\Repositories\Auth\AuthRepository;
 use App\Repositories\Auth\AuthRepositoryInterface;
-use App\Repositories\Contracts\CategoriesRepository;
-use App\Repositories\MySql\MySqlCategoriesRepository;
+use App\Repositories\Contracts\ServicesRepository;
+use App\Repositories\MySql\MySqlServicesRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -20,8 +20,8 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
 
-        $this->app->bind(CategoriesRepository::class, function () {
-            return new MySqlCategoriesRepository(new Category());
+        $this->app->bind(ServicesRepository::class, function () {
+            return new MySqlServicesRepository(new Service());
         });
     }
 

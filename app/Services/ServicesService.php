@@ -2,15 +2,14 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\CategoriesRepository;
-use App\Services\Interfaces\CategoriesServiceInterface;
 use App\Services\Interfaces\CRUDServiceInterface;
+use App\Services\Interfaces\ServicesServiceInterface;
 
-class CategoriesService implements CRUDServiceInterface, CategoriesServiceInterface
+class ServicesService implements CRUDServiceInterface, ServicesServiceInterface
 {
 
     public function __construct(
-        private CategoriesRepository $categoriesRepo
+        private  $categoriesRepo
     ) {
     }
 

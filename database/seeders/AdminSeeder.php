@@ -19,12 +19,14 @@ class AdminSeeder extends Seeder
     {
         DB::table('users')->insert([
             'name' => 'admin',
-            'email' => 'admin@gmail.com',
+            'email' => 'admin@admin.com',
+            'phone'=>'011',
             'password' => Hash::make('admin'),
             'gender' => 'male',
             'birthday' => Carbon::now()->format('Y-m-d'),
             'role' => 'admin',
             'email_verified_at'=> Carbon::now(),
+            'phone_verified_at'=>Carbon::now(),
             'created_at'=>Carbon::now()
         ]);
     }

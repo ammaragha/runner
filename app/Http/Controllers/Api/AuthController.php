@@ -25,83 +25,88 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $logged = $this->authRepo->login($request->only(['email', 'password']));
-
-        if (!$logged)
-            return $this->badRequest("email or password incorrect!");
-        else if ($logged == 'notVerified')
-            return $this->badRequest("phone not verified need to verfiy your phone");
-        else if ($logged)
-            return $this->succWithData(new AuthResource($logged), 'logged in successfully');
+        try {
+            $user = $this->authRepo->login($request->only(['email', 'password']));
+            return $this->success('logged in successfully', new AuthResource($user));
+        } catch (\Exception $e) {
+            return $this->badRequest($e->getMessage());
+        }
     }
 
     public function register(RegisterRequest $request)
     {
-        $registed  = $this->authRepo->register($request->all());
-        if ($registed) {
-            $phone = $registed->phones()->where('default', true)->first()->phone;
-            return $this->succMsg("user registed successfully, need to verify {$phone}");
-        } else
-            return $this->serverErr("something went wrong");
+        try {
+            $registed  = $this->authRepo->register($request->all());
+            $phone = $registed->phone;
+            return $this->createdSuccessfully("user registed successfully, need to verify {$phone}", ['phone' => $phone]);
+        } catch (\Exception $e) {
+            return $this->serverErr("something went wrong: {$e->getMessage()}");
+        }
     }
 
-    public function reset(ResetPasswordRequest $request){
-        $password = $request->input('password');
-        $phone = $request->input('phone');
-
-        $resetPassword = $this->authRepo->reset($phone,$password);
-
-        if ($resetPassword)
-            return $this->succMsg('Password reseted');
-        else {
-            return $this->badRequest('Something went wrong, mabye i didnt found your phone');
+    public function reset(ResetPasswordRequest $request)
+    {
+        try {
+            $password = $request->input('password');
+            $phone = $request->input('phone');
+            $resetPassword = $this->authRepo->reset($phone, $password);
+            return $this->bool($resetPassword, 'password changed', 'password not changed');
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage(), $e->getCode());
         }
     }
 
     public function getPhoneByEmail(EmailRequest $request)
     {
-        $phone = $this->authRepo->getPhoneByEmail($request->input('email'));
-        if ($phone)
-            return $this->succWithData(['phone' => $phone], 'Phone number need to verify');
-        else {
-            return $this->badRequest('Something went wrong, mabye i didnt found your phone');
+        try {
+            $phone = $this->authRepo->getPhoneByEmail($request->input('email'));
+            return $this->success("your phone is {$phone}", ['phone' => $phone]);
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage(), $e->getCode());
         }
     }
 
-    public function sendOTP(SendOTPRequest $request){
-        $phone = $request->input('phone');
+    public function sendOTP(SendOTPRequest $request)
+    {
+        try {
+            $phone = $request->input('phone');
+            $sendOTP = $this->authRepo->sendOTP($phone);
+            return $this->bool($sendOTP, 'OTP sent successfully', 'OTP not sent');
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage(), $e->getCode());
+        }
+    }
 
-        $sendOTP = $this->authRepo->sendOTP($phone);
-        if ($sendOTP)
-            return $this->succWithData(['phone' => $phone], 'OTP sent successfully');
+
+    public function verifyOTP(VerifyRequest $request)
+    {
+        try {
+            $code = $request->input('code');
+            $phone = $request->input('phone');
+
+            $verifyOTP = $this->authRepo->verifyOTP($phone, $code);
+            return $this->bool($verifyOTP,'OTP verified successfully','OTP not verfied!');
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage(),$e->getCode());
+        }
+
+        if ($verifyOTP)
+            return $this->succWithData(['phone' => $phone], );
         else {
             return $this->badRequest('Something went wrong');
         }
     }
 
-    
-    public function verifyOTP(VerifyRequest $request){
-        $code = $request->input('code');
-        $phone = $request->input('phone');
 
-        $verifyOTP = $this->authRepo->verifyOTP($phone,$code);
-        if ($verifyOTP == 'approved')
-            return $this->succWithData(['phone' => $phone], 'OTP verified successfully');
-        else {
-            return $this->badRequest('Something went wrong');
-        }
-    }
-
-
-    public function verify(VerifyRequest $request){
-        $phone = $request->input('phone');
-        $code = $request->input('code');
-
-        $verify = $this->authRepo->verify($phone,$code);
-        if ($verify)
-            return $this->succMsg('Phone number successfully verified, you can login now');
-        else {
-            return $this->badRequest('Something went wrong');
+    public function verify(VerifyRequest $request)
+    {
+        try {
+            $phone = $request->input('phone');
+            $code = $request->input('code');
+            $verified = $this->authRepo->verify($phone, $code);
+            return $this->bool($verified, 'Phone verified', 'Phone not verfied');
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage(), $e->getCode());
         }
     }
 }

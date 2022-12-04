@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             "password" => ['required', "min:3", "max:255"],
             "gender" => ['required', "in:male,female,other"],
             "birthday" => ['required', 'date'],
-            "phone" => ['required', 'unique:phones,phone'],
+            "phone" => ['required', 'unique:users,phone'],
             "lat" => ['sometimes', 'required'],
             "long" => ['sometimes', 'required'],
             "city" => ['required', "min:3", "max:50"],
@@ -38,7 +38,7 @@ class RegisterRequest extends FormRequest
             "suite" => ['sometimes', 'required', "min:3", "max:50"],
             "zip" => ['sometimes', 'required', 'numeric'],
             "role" => ['sometimes', 'in:runner,user'],
-            "category_id" => ['required_if:role,runner', 'nullable', 'exists:categories,id'],
+            "service_id" => ['required_if:role,runner', 'nullable', 'exists:services,id'],
             "cost_per_hour" => ['required_if:role,runner', 'nullable', 'numeric'],
         ];
     }

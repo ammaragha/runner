@@ -11,7 +11,7 @@ class Runner extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'cost_per_hour', 'category_id', 'user_id'
+        'cost_per_hour', 'service_id', 'user_id'
     ];
     
     public function user()

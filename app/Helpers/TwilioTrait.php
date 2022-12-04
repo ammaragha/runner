@@ -10,14 +10,19 @@ trait TwilioTrait
     /**
      * send OTP
      */
-    public function sendOTP(string $phone)
+    public function sendOTP(string $phone): bool
     {
-       $sent =  $this->twilioService()->verifications
-        ->create($phone, "sms");
-        if ($sent) { 
-            return true;
-        } else {
-            return false;
+        try {
+            $sent =  $this->twilioService()->verifications
+                ->create($phone, "sms");
+            if ($sent) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            $e = $this->twilioErrors($e);
+            throw new \Exception($e->getMessage(), $e->getCode());
         }
     }
 
@@ -25,13 +30,23 @@ trait TwilioTrait
     /**
      * verify
      */
-    public function verifyOTP(string $phone, string $code)
+    public function verifyOTP(string $phone, string $code): bool
     {
-        $verification = $this->twilioService()
-            ->verificationChecks
-            ->create(['to' => $phone, 'code' => $code]);
-
-        return $verification->status;
+        try {
+            $verification = $this->twilioService()
+                ->verificationChecks
+                ->create(['to' => $phone, 'code' => $code]);
+            if ($verification->status == 'approved') {
+                return true;
+            } elseif ($verification->status == 'pending') {
+                throw new \Exception("code not correct", 400);
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            $e = $this->twilioErrors($e);
+            throw new \Exception($e->getMessage(), $e->getCode());
+        }
     }
 
 
@@ -50,5 +65,27 @@ trait TwilioTrait
     {
         $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
         return $this->twilio()->verify->v2->services($twilio_verify_sid);
+    }
+
+    private function twilioErrors(\Exception $e)
+    {
+        $status = $e->getCode();
+        $msg = $e->getMessage();
+        switch ($e->getCode()) {
+            case 60202:
+                $status = 429;
+                $msg = explode(":", $e->getMessage())[0];
+                break;
+            case 20404:
+                $status = 404;
+                $msg = explode(":", $e->getMessage())[0];
+                break;
+            case 20003:
+                $status = 401;
+                break;
+            default:
+                break;
+        }
+        return new \Exception($msg, $status);
     }
 }

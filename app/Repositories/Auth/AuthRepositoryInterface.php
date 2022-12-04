@@ -3,56 +3,56 @@
 namespace App\Repositories\Auth;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
-interface AuthRepositoryInterface 
+interface AuthRepositoryInterface
 {
     /**
      * make a Login
      * @param array $cred
      */
-    public function login(array $cred);
+    public function login(array $cred): Model;
 
     /**
      * make a registration
      * @param array $inputs
      */
-    public function register(array $inputs);
+    public function register(array $inputs): Model;
 
     /**
      * reset password
      */
-    public function reset(string $phone,string $password);
+    public function reset(string $phone, string $password): bool;
 
     /**
      * create Token
      * 
      */
-    public function generateToken(User $user);
+    public function generateToken(User $user): string;
 
     /**
      * prapare user data to save it
      */
-    public function prepareUser(array $inputs);
+    public function prepareUser(array $inputs): array;
 
     /**
      * if user is runner prepare 
      * 
      */
-    public function prepareRunner(array $inputs);
+    public function prepareRunner(array $inputs):array;
 
     /**
      * prepare address data for user
      */
-    public function prepareAddress(array $inputs);
+    public function prepareAddress(array $inputs):array;
 
     /**
      * get phone from email
      */
-    public function getPhoneByEmail(string $email);
+    public function getPhoneByEmail(string $email):string;
 
     /**
      * verify
      */
-    public function verify(string $phone,string $code);
-
+    public function verify(string $phone, string $code):bool;
 }

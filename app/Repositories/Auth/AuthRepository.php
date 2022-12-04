@@ -3,10 +3,10 @@
 namespace App\Repositories\Auth;
 
 use App\Helpers\TwilioTrait;
-use App\Models\Phone;
-use App\Models\Runner;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -18,23 +18,22 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
      * Login
      * @param array $cred
      */
-    public function login(array $cred)
+    public function login(array $cred): User
     {
         if (Auth::attempt($cred)) {
             $user = Auth::user();
 
             // get his defualt phone
-            $hasVerifiedphone = $user->phones()->where('default', true)->where('isVerified', true)->first();
-
+            $hasVerifiedphone = $user->phone_verified_at;
             if (!$hasVerifiedphone) {
                 Auth::logout();
-                return "notVerified";
+                throw new Exception("phone not verified",Response::HTTP_BAD_REQUEST);
             } else {
                 $user->token = $this->generateToken($user);
                 return $user;
             }
         } else {
-            return false;
+            throw new Exception("email or password incorrect!",Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -43,15 +42,12 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
      * Register
      * @param array $inputs
      */
-    public function register(array $inputs)
+    public function register(array $inputs): User
     {
         $user = DB::transaction(function () use ($inputs) {
             $user = $this->prepareUser($inputs);
-            $user->role = isset($inputs['role']) && $inputs['role'] == "runner" ? "runner" : "user";
-            $user->saveOrFail();
-
-            //phone
-            $user->phones()->create(['phone' => $inputs['phone'], 'default' => true]);
+            $user['role'] = isset($inputs['role']) && $inputs['role'] == "runner" ? "runner" : "user";
+            $user = User::create($user);
 
             //address
             $address = $this->prepareAddress($inputs);
@@ -73,9 +69,12 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
     /**
      * reset password
      */
-    public function reset(string $phone,  string $password)
+    public function reset(string $phone,  string $password): bool
     {
-        $user = Phone::where('phone', $phone)->first()->user();
+        $user = User::where('phone', $phone)->first();
+
+        if (!$user)
+            throw new Exception('Phone not exist',Response::HTTP_BAD_REQUEST);
         $updated = $user->update([
             'password' => Hash::make($password)
         ]);
@@ -86,7 +85,7 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
     /**
      * generate Token for authed user
      */
-    public function generateToken(User $user)
+    public function generateToken(User $user): string
     {
         return $user->createToken('api')->plainTextToken;
     }
@@ -95,11 +94,11 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
     /**
      * prepare Runner data
      */
-    public function prepareRunner($inputs)
+    public function prepareRunner($inputs): array
     {
         $runner = [
             'cost_per_hour' => $inputs['cost_per_hour'],
-            'category_id' => $inputs['category_id']
+            'service_id' => $inputs['service_id']
         ];
 
         return $runner;
@@ -108,14 +107,16 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
     /**
      * prepare user data
      */
-    public function prepareUser($inputs)
+    public function prepareUser($inputs): array
     {
-        $user = new User();
-        $user->name = $inputs['name'];
-        $user->email = $inputs['email'];
-        $user->password = Hash::make($inputs['password']);
-        $user->birthday = Carbon::parse($inputs['birthday'])->format('Y-m-d');
-        $user->gender = $inputs['gender'];
+        $user = [
+            'name' => $inputs['name'],
+            'email' => $inputs['email'],
+            'password' => Hash::make($inputs['password']),
+            'birthday' => Carbon::parse($inputs['birthday'])->format('Y-m-d'),
+            'gender' => $inputs['gender'],
+            'phone' => $inputs['phone']
+        ];
 
         return $user;
     }
@@ -124,10 +125,11 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
     /**
      * prepare address data
      */
-    public function prepareAddress(array $inputs)
+    public function prepareAddress(array $inputs): array
     {
         $address = [
             'name' => isset($inputs['addressName']) ? $inputs['addressName'] : 'home',
+            'phone' => $inputs['phone'],
             'city' => $inputs['city'],
             'state' => $inputs['state'],
             'lat' => isset($inputs['lat']) ? $inputs['lat'] : null,
@@ -143,24 +145,20 @@ class AuthRepository implements AuthRepositoryInterface, OTPInterface
     /**
      * get Phone from Email
      */
-    public function getPhoneByEmail(string $email)
+    public function getPhoneByEmail(string $email): string
     {
         $user = User::where('email', $email)->first();
-        $phone = $user->phones()->where('default', true)->first();
-        if ($phone)
-            return $phone->phone;
-        else
-            return false;
+        return $user->phone;
     }
 
     /**
      * verify phone number
      */
-    public function verify(string $phone, string $code)
+    public function verify(string $phone, string $code): bool
     {
         $verifyOTP = $this->verifyOTP($phone, $code);
-        if ($verifyOTP == 'approved') {
-            $updated = Phone::where('phone', $phone)->update(['isVerified' => true]);
+        if ($verifyOTP) {
+            $updated = User::where('phone', $phone)->update(['phone_verified_at' => Carbon::now()]);
             return $updated;
         } else {
             return false;

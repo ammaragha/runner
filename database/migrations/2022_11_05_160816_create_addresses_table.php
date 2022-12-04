@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('street',100)->nullable();
             $table->string('suite',50)->nullable();
             $table->string('zip',20)->nullable();
+            $table->string('phone');
             $table->timestamps();
             $table->softDeletes();
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->nullOnDelete();

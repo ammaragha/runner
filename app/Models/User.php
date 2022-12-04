@@ -21,6 +21,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
         'gender',
         'birthday',
@@ -46,12 +47,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'phone_verified_at'=>'datetime'
     ];
 
-    public function phones()
-    {
-        return $this->hasMany(Phone::class, 'user_id');
-    }
 
     public function runner()
     {

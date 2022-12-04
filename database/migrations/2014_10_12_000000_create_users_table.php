@@ -18,7 +18,9 @@ return new class extends Migration
             $table->id();
             $table->string('name',50);
             $table->string('email')->unique();
+            $table->string('phone')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('phone_verified_at')->nullable();
             $table->string('password');
             $table->enum('gender',['male','female','other'])->default('male');
             $table->date('birthday')->default(Carbon::now());

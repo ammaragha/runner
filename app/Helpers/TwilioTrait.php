@@ -26,6 +26,27 @@ trait TwilioTrait
         }
     }
 
+    public function sendOTPMsg(string $phone,string $msg): bool
+    {
+        try {
+            $msgService = getenv('TWILIO_MASSEGES_SID');
+            $options = [
+                "messagingServiceSid" => $msgService,
+                "body" => $msg
+            ];
+            $sent = $this->twilio()->messages->create($phone, $options);
+            dd($sent->status);
+            if ($sent) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            $e = $this->twilioErrors($e);
+            throw new \Exception($e->getMessage(), $e->getCode());
+        }
+    }
+
 
     /**
      * verify
@@ -66,6 +87,8 @@ trait TwilioTrait
         $twilio_verify_sid = getenv("TWILIO_VERIFY_SID");
         return $this->twilio()->verify->v2->services($twilio_verify_sid);
     }
+
+
 
     private function twilioErrors(\Exception $e)
     {

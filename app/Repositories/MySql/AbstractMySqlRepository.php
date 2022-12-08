@@ -17,12 +17,24 @@ abstract class AbstractMySqlRepository implements BaseRepository
     }
 
     /**
+     * just return Model
+     */
+    public function make(Model|Builder $model = null): Model|Builder
+    {
+        if ($model) {
+            $this->model = $model;
+        }
+
+        return $this->model;
+    }
+
+    /**
      * prepare order by
      * @param string $orderType
      * @param string $orderField
      * @return Builder
      */
-    public function orderBy(Model $model, $orderField, $orderType): Builder
+    public function orderBy(Model|Builder $model, $orderField, $orderType): Builder
     {
         if (!is_null($orderType) && !is_null($orderField)) {
             $result =  $model->orderBy($orderField, $orderType);
@@ -60,6 +72,20 @@ abstract class AbstractMySqlRepository implements BaseRepository
         $model = $this->model;
         $ordered = $this->orderBy($model, $orderField, $orderType);
         return $ordered->paginate($perPage);
+    }
+
+    /**
+     * return data in search 
+     * @param string $searchKey
+     * @param string $searchValue
+     * @param string $roderType
+     * @param string $orderField
+     */
+    public function search(string $searchKey, string $searchValue, $orderField = null, $orderType = null): model|Builder
+    {
+        $model = $this->model;
+        $searched = $model->where($searchKey, "LIKE", "%" . $searchValue . "%");
+        return $this->orderBy($searched, $orderField, $orderType);
     }
 
     /**

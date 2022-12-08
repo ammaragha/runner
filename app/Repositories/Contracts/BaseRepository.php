@@ -9,6 +9,12 @@ use Illuminate\Support\Collection;
 
 interface BaseRepository
 {
+
+    /**
+     * just return Model
+     */
+    public function make(Model|Builder $model = null): Model|Builder;
+
     /**
      * prepare order by
      * @param Model $model
@@ -16,7 +22,7 @@ interface BaseRepository
      * @param string $orderField
      * @return Builder
      */
-    public function orderBy(Model $model, $orderType, $orderField): Builder;
+    public function orderBy(Model|Builder $model, $orderType, $orderField): Builder;
 
     /**
      * retrive all data
@@ -33,7 +39,16 @@ interface BaseRepository
      * @param string $roderType
      * @param string $orderField
      */
-    public function pagination(int $perPage, $orderType = null, $orderField = null): LengthAwarePaginator;
+    public function pagination(int $perPage, $orderField = null, $orderType = null): LengthAwarePaginator;
+
+    /**
+     * return data in search 
+     * @param string $searchKey
+     * @param string $searchValue
+     * @param string $roderType
+     * @param string $orderField
+     */
+    public function search(string $searchKey, string $searchValue, $orderField = null, $orderType = null): model|Builder;
 
     /**
      * find by id

@@ -38,7 +38,7 @@ class RegisterRequest extends FormRequest
             "suite" => ['sometimes', 'required', "min:3", "max:50"],
             "zip" => ['sometimes', 'required', 'numeric'],
             "role" => ['sometimes', 'in:runner,user'],
-            "service_id" => ['required_if:role,runner', 'nullable', 'exists:services,id'],
+            "service_id" => ['required_if:role,runner', 'nullable'],
             "cost_per_hour" => ['required_if:role,runner', 'nullable', 'numeric'],
         ];
     }

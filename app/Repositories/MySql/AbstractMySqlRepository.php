@@ -3,7 +3,9 @@
 namespace App\Repositories\MySql;
 
 use App\Repositories\Contracts\BaseRepository;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 abstract class AbstractMySqlRepository implements BaseRepository
@@ -18,15 +20,16 @@ abstract class AbstractMySqlRepository implements BaseRepository
      * prepare order by
      * @param string $orderType
      * @param string $orderField
-     * @return Model
+     * @return Builder
      */
-    public function orderBy(Model $model, $orderType, $orderField): Model
+    public function orderBy(Model $model, $orderField, $orderType): Builder
     {
         if (!is_null($orderType) && !is_null($orderField)) {
-            $result =  $model->orderBy($orderType, $orderField);
+            $result =  $model->orderBy($orderField, $orderType);
         } else {
             $result = $model;
         }
+
         return $result;
     }
 
@@ -37,10 +40,10 @@ abstract class AbstractMySqlRepository implements BaseRepository
      * @param array $cols
      * @return Collection
      */
-    public function all($orderType = null, $orderField = null, array $cols = []): Collection
+    public function all($orderField = null, $orderType = null, array $cols = []): Collection
     {
         $model = $this->model;
-        $ordered = $this->orderBy($model, $orderType, $orderField);
+        $ordered = $this->orderBy($model, $orderField, $orderType);
         return count($cols) > 0 ? $ordered->get($cols) : $ordered->get();
     }
 
@@ -50,13 +53,13 @@ abstract class AbstractMySqlRepository implements BaseRepository
      * @param int $perPage
      * @param string $roderType
      * @param string $orderField
-     * @return Collection
+     * @return LengthAwarePaginator
      */
-    public function pagination(int $perPage, $orderType = null, $orderField = null): Collection
+    public function pagination(int $perPage, $orderField = null, $orderType = null): LengthAwarePaginator
     {
         $model = $this->model;
-        $ordered = $this->orderBy($model, $orderType, $orderField);
-        return $ordered->pagination($perPage);
+        $ordered = $this->orderBy($model, $orderField, $orderType);
+        return $ordered->paginate($perPage);
     }
 
     /**
@@ -80,10 +83,10 @@ abstract class AbstractMySqlRepository implements BaseRepository
      * @param array $cols
      * @return Model|Collection
      */
-    public function findBy($key, $value, $op = "=", int $limit = null, $orderType = null, $orderField = null, array $cols = []): Model|Collection
+    public function findBy($key, $value, $op = "=", int $limit = null, $orderField = null, $orderType = null, array $cols = []): Model|Collection
     {
         $model = $this->model->where($key, $op, $value);
-        $ordered = $this->orderBy($model, $orderType, $orderField);
+        $ordered = $this->orderBy($model, $orderField, $orderType);
         if ($limit) {
             if ($limit == 1) {
                 return count($cols) > 0 ? $ordered->first($cols) : $ordered->first();

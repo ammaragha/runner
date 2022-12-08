@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\ResponseTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Service\ServiceRequest;
+use App\Http\Resources\Service\ServicePaginationResource;
 use App\Http\Resources\Service\ServiceResource;
 use App\Services\ServicesService;
 use Illuminate\Http\Request;
@@ -26,8 +27,36 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $cateogries = $this->servicesService->all();
-        return $this->success("all services", ServiceResource::collection($cateogries));
+        try {
+            $services = $this->servicesService->all();
+            return $this->success("all services", ServiceResource::collection($services));
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage());
+        }
+    }
+
+    /**
+     * Display a lisiting ofr the resource Paginated.
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function pagination(string $field = "id", string $type = "desc", int $perPage, Request $request)
+    {
+        try {
+            $search = $request->input('search');
+            if ($search) {
+                $services = $this->servicesService->search('name', $search, $field, $type)->paginate($perPage);
+            } else {
+                $services = $this->servicesService->pagination($perPage, $field, $type);
+            }
+            $metaData = [
+                "count" => $services->toArray()['total'],
+                "totalPages" => $services->toArray()['last_page']
+            ];
+            return $this->successWithMetaData('Services', ServiceResource::collection($services), $metaData);
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage());
+        }
     }
 
     /**

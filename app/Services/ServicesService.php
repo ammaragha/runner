@@ -47,4 +47,15 @@ class ServicesService implements CRUDServiceInterface, ServicesServiceInterface
     {
         return $this->serviceRepo->all();
     }
+
+    public function pagination(int $perPage, string $orderField, string $orderType)
+    {
+        return $this->serviceRepo->pagination($perPage, $orderField, $orderType);
+    }
+
+    public function search(string $searchKey, string $searchValue, string $orderField, string $orderType)
+    {
+        $services = $this->serviceRepo->search($searchKey, $searchValue, $orderField, $orderType);
+        return $services;
+    }
 }

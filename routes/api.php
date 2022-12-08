@@ -15,23 +15,26 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-//Auth
-Route::group(['prefix'=>'auth'], function ()
-{
-    Route::post('/register',[AuthController::class,'register']);
-    Route::post('/login',[AuthController::class,'login']);
-    Route::post('/getPhoneByEmail',[AuthController::class,'getPhoneByEmail']);
-    Route::post('/sendOTP',[AuthController::class,'sendOTP']);
-    Route::post('/verifyOTP',[AuthController::class,'verifyOTP']);
-    Route::post('/verify',[AuthController::class,'verify']);
-    Route::patch('/reset',[AuthController::class,'reset']);
-
-});
-
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//Auth
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/getPhoneByEmail', [AuthController::class, 'getPhoneByEmail']);
+    Route::post('/sendOTP', [AuthController::class, 'sendOTP']);
+    Route::post('/verifyOTP', [AuthController::class, 'verifyOTP']);
+    Route::post('/verify', [AuthController::class, 'verify']);
+    Route::patch('/reset', [AuthController::class, 'reset']);
+});
 
-Route::apiResource('services',ServiceController::class);
+
+Route::group(['prefix' => 'services'], function () {
+    Route::get('/', [ServiceController::class, 'index']);
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('/pagination/{field?}/{type?}/{perPage}', [ServiceController::class, 'pagination']);
+    });
+});

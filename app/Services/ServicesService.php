@@ -2,45 +2,49 @@
 
 namespace App\Services;
 
+use App\Models\Service;
 use App\Services\Interfaces\CRUDServiceInterface;
 use App\Services\Interfaces\ServicesServiceInterface;
+use App\Repositories\Contracts\ServicesRepository;
+use Exception;
+use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 
 class ServicesService implements CRUDServiceInterface, ServicesServiceInterface
 {
 
     public function __construct(
-        private  $categoriesRepo
+        private  ServicesRepository $serviceRepo
     ) {
     }
 
-    public function create(array $inputs)
+    public function create(array $inputs): Service
     {
-        return  $this->categoriesRepo->save($inputs);
+        return  $this->serviceRepo->save($inputs);
     }
 
-    public function read(int $id)
+    public function read(int $id): Service
     {
-        return $this->categoriesRepo->findById($id);
+        $service = $this->serviceRepo->findById($id);
+        if (!$service)
+            throw new Exception("Service not found", Response::HTTP_NOT_FOUND);
+        return $service;
     }
 
-    public function update(int $id, array $inputs)
+    public function update(int $id, array $inputs): bool
     {
-        $category = $this->categoriesRepo->findById($id);
-        if (!$category)
-            return false;
-        return  $this->categoriesRepo->update($category, $inputs);
+        $service = $this->read($id);
+        return  $this->serviceRepo->update($service, $inputs);
     }
 
-    public function delete(int $id)
+    public function delete(int $id): bool
     {
-        $category = $this->categoriesRepo->findById($id);
-        if (!$category)
-            return false;
-        return $this->categoriesRepo->delete($category);
+        $service = $this->read($id);
+        return $this->serviceRepo->delete($service);
     }
 
-    public function all()
+    public function all(): Collection
     {
-        return $this->categoriesRepo->all();
+        return $this->serviceRepo->all();
     }
 }

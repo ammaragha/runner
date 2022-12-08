@@ -17,13 +17,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('service_id')->nullable();
-            $table->unique(['user_id','service_id']);
+            $table->unique(['user_id', 'service_id']);
             $table->double('cost_per_hour');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('service_id')->references('id')->on('services')->nullOnDelete();
             $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
-
         });
     }
 

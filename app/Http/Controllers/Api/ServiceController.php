@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ResponseTrait;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Category\CategoryRequest;
-use App\Http\Resources\Category\CategoryResource;
-use App\Repositories\Contracts\ServicesRepository;
+use App\Http\Requests\Service\ServiceRequest;
+use App\Http\Resources\Service\ServiceResource;
+use App\Services\ServicesService;
 use Illuminate\Http\Request;
 
 class ServiceController extends Controller
@@ -14,7 +14,7 @@ class ServiceController extends Controller
     use ResponseTrait;
 
     public function __construct(
-        private ServicesRepository $servicesService
+        private ServicesService $servicesService
     ) {
     }
 
@@ -27,7 +27,7 @@ class ServiceController extends Controller
     public function index()
     {
         $cateogries = $this->servicesService->all();
-        return $this->success("all services", CategoryResource::collection($cateogries));
+        return $this->success("all services", ServiceResource::collection($cateogries));
     }
 
     /**
@@ -36,12 +36,12 @@ class ServiceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CategoryRequest $request)
+    public function store(ServiceRequest $request)
     {
         // $data = $request->only('name');
         // $stored = $this->servicesService->create($data);
         // if ($stored)
-        //     return $this->succWithData(new CategoryResource($stored), 'new category has been added');
+        //     return $this->succWithData(new ServiceResource($stored), 'new category has been added');
         // else
         //     return $this->serverErr("something went wrong");
     }
@@ -56,7 +56,7 @@ class ServiceController extends Controller
     {
         // $category = $this->servicesService->read($id);
         // if ($category)
-        //     return $this->succWithData(new CategoryResource($category));
+        //     return $this->succWithData(new ServiceResource($category));
         // else
         //     return $this->badRequest("cant bring that category, check id");
     }
@@ -68,7 +68,7 @@ class ServiceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CategoryRequest $request, $id)
+    public function update(ServiceRequest $request, $id)
     {
         // $inputs = $request->only('name');
         // $updated = $this->servicesService->update($id,$inputs);

@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
     protected $fillable = ['name'];
+
+    public function runners()
+    {
+        return $this->hasMany(Runner::class);
+    }
 }

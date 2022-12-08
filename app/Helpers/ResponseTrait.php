@@ -22,6 +22,22 @@ trait ResponseTrait
     }
 
     /**
+     * success operation
+     * 200
+     */
+    public static function successWithMetaData(string $message = "Data Retrieved", mixed $data = [], mixed $metaData = [])
+    {
+        $responseArray = [
+            "status" => true,
+            "message" => $message,
+            "data" => $data,
+            "metaData" => $metaData
+        ];
+
+        return response()->json($responseArray, Response::HTTP_OK);
+    }
+
+    /**
      * createdSuccessfully
      * 201
      */

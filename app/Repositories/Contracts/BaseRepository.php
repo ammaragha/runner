@@ -2,7 +2,9 @@
 
 namespace App\Repositories\Contracts;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 interface BaseRepository
@@ -12,9 +14,9 @@ interface BaseRepository
      * @param Model $model
      * @param string $orderType
      * @param string $orderField
-     * @return Model
+     * @return Builder
      */
-    public function orderBy(Model $model, $orderType, $orderField): Model;
+    public function orderBy(Model $model, $orderType, $orderField): Builder;
 
     /**
      * retrive all data
@@ -30,9 +32,8 @@ interface BaseRepository
      * @param int $perPage
      * @param string $roderType
      * @param string $orderField
-     * @return Collection
      */
-    public function pagination(int $perPage, $orderType = null, $orderField = null): Collection;
+    public function pagination(int $perPage, $orderType = null, $orderField = null): LengthAwarePaginator;
 
     /**
      * find by id
@@ -52,7 +53,7 @@ interface BaseRepository
      * @param array $cols
      * @return Model|Collection
      */
-    public function findBy($key, $value, $op = "=", int $limit = null, $orderType = null, $orderField = null,array $cols=[]): Model|Collection;
+    public function findBy($key, $value, $op = "=", int $limit = null, $orderType = null, $orderField = null, array $cols = []): Model|Collection;
 
     /**
      * save new

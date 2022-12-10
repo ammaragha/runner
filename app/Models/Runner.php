@@ -11,15 +11,21 @@ class Runner extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'cost_per_hour', 'service_id', 'user_id',"is_active"
+        'cost_per_hour', 'service_id', 'user_id', "is_active"
     ];
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function service(){
+    public function service()
+    {
         return $this->belongsTo(Service::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Runner::class, 'ruuner_id');
     }
 }

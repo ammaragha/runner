@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('description');
-            $table->string('voice');
+            $table->string('voice')->nullable();
             $table->date('date');
             $table->time('time');
-            $table->enum('need_type',['urgent','noraml']);
-            $table->enum('complexity',['true','false']);
+            $table->boolean('urgent')->default(false);
+            $table->boolean('complex')->default(false);
             $table->enum('care_for',['experience','quality']);
             $table->string('response')->nullable();
             $table->enum('status',['pending','accepted','rejected']);
@@ -28,6 +28,7 @@ return new class extends Migration
             $table->softDeletes();
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->nullOnDelete();
             $table->foreignId('runner_id')->nullable()->references('id')->on('runners')->nullOnDelete();
+            $table->foreignId('address_id')->nullable()->references('id')->on('addresses')->nullOnDelete();
 
         });
     }

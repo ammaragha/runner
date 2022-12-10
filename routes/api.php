@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,3 +39,10 @@ Route::group(['prefix' => 'services'], function () {
         Route::get('/pagination/{field}/{type}/{perPage}', [ServiceController::class, 'pagination']);
     });
 });
+
+Route::group(['prefix' => 'orders'], function () {
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::post('/finedRunners',[OrderController::class,'findRunners']);
+    });
+});
+

@@ -34,7 +34,7 @@ abstract class AbstractMySqlRepository implements BaseRepository
      * @param string $orderField
      * @return Builder
      */
-    public function orderBy(Model|Builder $model, $orderField, $orderType): Builder
+    public function orderBy(Model|Builder $model, $orderField, $orderType): Builder|Model
     {
         if (!is_null($orderType) && !is_null($orderField)) {
             $result =  $model->orderBy($orderField, $orderType);

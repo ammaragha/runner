@@ -35,6 +35,6 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['prefix' => 'services'], function () {
     Route::get('/', [ServiceController::class, 'index']);
     Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::get('/pagination/{field?}/{type?}/{perPage}', [ServiceController::class, 'pagination']);
+        Route::get('/pagination/{field}/{type}/{perPage}', [ServiceController::class, 'pagination']);
     });
 });

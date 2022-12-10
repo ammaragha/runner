@@ -18,6 +18,7 @@ class RunnerResource extends JsonResource
         return [
             "id"=>$this->id,
             "cost_per_hour" => $this->cost_per_hour,
+            "is_active"=> $this->is_active,
             "service" => new ServiceResource($this->service),
         ];
     }

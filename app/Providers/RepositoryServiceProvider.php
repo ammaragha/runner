@@ -9,6 +9,7 @@ use App\Repositories\Auth\AuthRepository;
 use App\Repositories\Auth\AuthRepositoryInterface;
 use App\Repositories\Contracts\OrdersRepository;
 use App\Repositories\Contracts\ServicesRepository;
+use App\Repositories\Contracts\AddressesRepository;
 use App\Repositories\MySql\MySqlAddressesRepository;
 use App\Repositories\MySql\MySqlOrdersRepository;
 use App\Repositories\MySql\MySqlServicesRepository;

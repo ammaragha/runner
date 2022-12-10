@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\ResponseTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\findRunnersRequest;
+use App\Services\OrdersService;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    use ResponseTrait;
+
+    public function __construct(
+        private OrdersService $ordersService
+    ) {
+    }
     /**
      * Display a listing of the resource.
      *
@@ -69,7 +77,13 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function findRunners(findRunnersRequest $request){
-        
+    public function findRunners(findRunnersRequest $request)
+    {
+        try {
+            $inputs = $request->all();
+            $runner = $this->ordersService->findRunners($inputs);
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage(),$e->getCode());
+        }
     }
 }

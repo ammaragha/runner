@@ -18,6 +18,7 @@ class MySqlUsersRepository extends AbstractMySqlRepository implements UsersRepos
             ->join("addresses","addresses.user_id","=","users.id")
             ->join("runners","runners.user_id","=","users.id")
             ->where("addresses.state",$state)
+            ->where("runners.is_active",true)
             ->whereBetween("cost_per_hour",[$min_cost,$max_cost]);
         
         $users = $this->orderBy($users,$orderField,$orderType);

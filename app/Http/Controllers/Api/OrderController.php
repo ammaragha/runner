@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\ResponseTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\FindRunnerRequest;
+use App\Http\Requests\Order\OrderRequest;
+use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\User\UserResource;
 use App\Services\OrdersService;
 use Illuminate\Http\Request;
@@ -33,9 +35,15 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(OrderRequest $request)
     {
-        //
+        try {
+            $inputs = $request->all();
+            $order = $this->ordersService->create($inputs);
+            return $this->createdSuccessfully("Order saved successfully", new OrderResource($order));
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage());
+        }
     }
 
     /**
@@ -86,8 +94,8 @@ class OrderController extends Controller
             $metaData = [
                 "count" => $runners->toArray()['total'],
                 "totalPages" => $runners->toArray()['last_page']
-            ];  
-            return $this->successWithMetaData("Runners Retrived",UserResource::collection($runners),$metaData);
+            ];
+            return $this->successWithMetaData("Runners Retrived", UserResource::collection($runners), $metaData);
         } catch (\Exception $e) {
             return $this->failed($e->getMessage());
         }

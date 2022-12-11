@@ -25,6 +25,7 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
 
     public function create(array $inputs): Model
     {
+        $inputs['status'] = "pending";
         return $this->ordersRepository->save($inputs);
     }
 

@@ -21,13 +21,13 @@ return new class extends Migration
             $table->time('time');
             $table->boolean('urgent')->default(false);
             $table->boolean('complex')->default(false);
-            $table->enum('care_for',['experience','quality']);
+            $table->enum('care_for',['experience','cost'])->default('cost');
             $table->string('response')->nullable();
-            $table->enum('status',['pending','accepted','rejected']);
+            $table->enum('status',['pending','accepted','rejected'])->default('pending');
             $table->timestamps();
             $table->softDeletes();
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->nullOnDelete();
-            $table->foreignId('runner_id')->nullable()->references('id')->on('runners')->nullOnDelete();
+            $table->foreignId('runner_id')->nullable()->references('id')->on('users')->nullOnDelete();
             $table->foreignId('address_id')->nullable()->references('id')->on('addresses')->nullOnDelete();
 
         });

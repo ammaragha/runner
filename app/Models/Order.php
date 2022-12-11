@@ -12,17 +12,25 @@ class Order extends Model
 
     protected $fillable = [
         'description', 'voice', 'date', 'time', 'urgent', 'complex',
-        'care_for', 'response', 'status', 'user_id', 'runner_id'
+        'care_for', 'response', 'status', 'user_id', 'runner_id', 'address_id'
     ];
 
-    public function user(){
-        return $this->belongsTo(User::class,'user_id');
+    protected $casts = [
+        "date" => 'date:Y-m-d',
+        "time" => 'date:H:i'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function runner(){
-        return $this->belongsTo(Runner::class,'ruuner_id');
+    public function runner()
+    {
+        return $this->belongsTo(User::class, 'runner_id');
     }
-    public function address(){
-        return $this->belongsTo(Address::class,'address_id');
+    public function address()
+    {
+        return $this->belongsTo(Address::class, 'address_id');
     }
 }

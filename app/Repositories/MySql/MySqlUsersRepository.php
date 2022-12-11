@@ -8,11 +8,19 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MySqlUsersRepository extends AbstractMySqlRepository implements UsersRepository
 {
-    public function getUsersWithState(string $state): Model|Builder
+    public function getRunnerUsersForOrder(string $orderField=null, string $orderType=null, array $inputs): Model|Builder
     {
-        $users = $this->model->whereHas('addresses', function (Builder $q) use ($state) {
-            $q->where('state', $state);
-        });
+        $state = $inputs['state'];
+        $min_cost = $inputs['min_cost'];
+        $max_cost = $inputs['max_cost'];
+
+        $users = $this->model
+            ->join("addresses","addresses.user_id","=","users.id")
+            ->join("runners","runners.user_id","=","users.id")
+            ->where("addresses.state",$state)
+            ->whereBetween("cost_per_hour",[$min_cost,$max_cost]);
+        
+        $users = $this->orderBy($users,$orderField,$orderType);
         return $users;
     }
 }

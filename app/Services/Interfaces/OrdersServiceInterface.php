@@ -2,9 +2,9 @@
 
 namespace App\Services\Interfaces;
 
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface OrdersServiceInterface
 {
-    public function findRunner(array $inputs): Collection;
+    public function findRunner(array $inputs): LengthAwarePaginator;
 }

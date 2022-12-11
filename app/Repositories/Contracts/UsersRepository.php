@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 interface UsersRepository extends BaseRepository
 {
-    public function getUsersWithState(string $state): Model|Builder;
+    public function getRunnerUsersForOrder(string $orderField, string $orderType, array $inputs): Model|Builder;
 }

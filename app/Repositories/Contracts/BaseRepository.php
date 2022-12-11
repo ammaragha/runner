@@ -22,7 +22,7 @@ interface BaseRepository
      * @param string $orderField
      * @return Builder
      */
-    public function orderBy(Model|Builder $model, $orderType, $orderField): Builder|Model;
+    public function orderBy(Model|Builder $model, $orderField, $orderType): Builder|Model;
 
     /**
      * retrive all data

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\ResponseTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\FindRunnerRequest;
+use App\Http\Resources\User\UserResource;
 use App\Services\OrdersService;
 use Illuminate\Http\Request;
 
@@ -81,7 +82,12 @@ class OrderController extends Controller
     {
         try {
             $inputs = $request->all();
-            $runner = $this->ordersService->findRunner($inputs);
+            $runners = $this->ordersService->findRunner($inputs);
+            $metaData = [
+                "count" => $runners->toArray()['total'],
+                "totalPages" => $runners->toArray()['last_page']
+            ];  
+            return $this->successWithMetaData("Runners Retrived",UserResource::collection($runners),$metaData);
         } catch (\Exception $e) {
             return $this->failed($e->getMessage());
         }

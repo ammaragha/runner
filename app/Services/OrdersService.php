@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\Contracts\AddressesRepository;
 use App\Repositories\Contracts\OrdersRepository;
+use App\Repositories\Contracts\UsersRepository;
 use App\Services\Interfaces\CRUDServiceInterface;
 use App\Services\Interfaces\OrdersServiceInterface;
 use Exception;
@@ -15,7 +16,8 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
 {
     public function __construct(
         private OrdersRepository $ordersRepository,
-        private AddressesRepository $addressesRepository
+        private AddressesRepository $addressesRepository,
+        private UsersRepository $usersRepository
     ) {
     }
 
@@ -51,7 +53,8 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
         $max_cost = $inputs['max_cost'];
 
         $address = $this->addressesRepository->findById($address_id);
-        $user = $address->user();
+        $users = $this->usersRepository->getUsersWithState($address->state);
+        dd($users);
         return new Collection();
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ResponseTrait;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Order\findRunnersRequest;
+use App\Http\Requests\Order\FindRunnerRequest;
 use App\Services\OrdersService;
 use Illuminate\Http\Request;
 
@@ -77,13 +77,13 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function findRunners(findRunnersRequest $request)
+    public function findRunner(FindRunnerRequest $request)
     {
         try {
             $inputs = $request->all();
-            $runner = $this->ordersService->findRunners($inputs);
+            $runner = $this->ordersService->findRunner($inputs);
         } catch (\Exception $e) {
-            return $this->failed($e->getMessage(),$e->getCode());
+            return $this->failed($e->getMessage());
         }
     }
 }

@@ -42,7 +42,7 @@ Route::group(['prefix' => 'services'], function () {
 
 Route::group(['prefix' => 'orders'], function () {
     Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::post('/finedRunners',[OrderController::class,'findRunners']);
+        Route::post('/findRunner',[OrderController::class,'findRunner']);
     });
 });
 

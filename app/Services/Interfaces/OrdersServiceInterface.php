@@ -6,5 +6,5 @@ use Illuminate\Support\Collection;
 
 interface OrdersServiceInterface
 {
-    public function findRunners(array $inputs): Collection;
+    public function findRunner(array $inputs): Collection;
 }

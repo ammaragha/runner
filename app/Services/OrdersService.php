@@ -44,7 +44,7 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
         return $this->ordersRepository->delete($order);
     }
 
-    public function findRunners(array $inputs): Collection
+    public function findRunner(array $inputs): Collection
     {
         $address_id = $inputs['address_id'];
         $min_cost = $inputs['min_cost'];
@@ -52,7 +52,6 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
 
         $address = $this->addressesRepository->findById($address_id);
         $user = $address->user();
-dd($user);
         return new Collection();
     }
 }

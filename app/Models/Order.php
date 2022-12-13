@@ -12,12 +12,13 @@ class Order extends Model
 
     protected $fillable = [
         'description', 'voice', 'date', 'time', 'urgent', 'complex',
-        'care_for', 'response', 'status', 'user_id', 'runner_id', 'address_id'
+        'care_for', 'response', 'status', 'user_id', 'runner_id', 'address_id', "properties"
     ];
 
     protected $casts = [
-        "date" => 'date:Y-m-d',
-        "time" => 'date:H:i'
+        // "date" => 'date:Y-m-d',
+        // "time" => 'date:H:i',
+        "properties" => 'array'
     ];
 
     public function user()

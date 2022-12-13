@@ -24,8 +24,8 @@ return new class extends Migration
             $table->enum('care_for', ['experience', 'cost'])->default('cost');
             $table->string('response')->nullable();
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
-            $table->double('deal');
-            $table->json('properties');
+            $table->double('deal')->nullable();
+            $table->json('properties')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->nullOnDelete();

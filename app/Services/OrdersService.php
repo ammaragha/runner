@@ -53,10 +53,19 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
     {
         $address_id = $inputs['address_id'];
         $address = $this->addressesRepository->findById($address_id);
-        
-        $inputs['state'] = $address->state;
-        $users = $this->usersRepository->getRunnerUsersForOrder("id","ASC",$inputs);
 
-        return $users->paginate(5,["users.*"]);
+        $inputs['state'] = $address->state;
+        $users = $this->usersRepository->getRunnerUsersForOrder("id", "ASC", $inputs);
+
+        return $users->paginate(5, ["users.*"]);
+    }
+
+    public function recent(int $limit,string $role ,int $id,array $inputs = []):Collection
+    {
+        if($role == 'runner'){
+            return $this->ordersRepository->findBy("ruuner_id",$id,"=",$limit);
+        }else{
+            return $this->ordersRepository->findBy("user_id",$id,"=",$limit);
+        }
     }
 }

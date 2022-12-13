@@ -10,6 +10,7 @@ use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\User\UserResource;
 use App\Services\OrdersService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -96,6 +97,26 @@ class OrderController extends Controller
                 "totalPages" => $runners->toArray()['last_page']
             ];
             return $this->successWithMetaData("Runners Retrived", UserResource::collection($runners), $metaData);
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage());
+        }
+    }
+
+    /**
+     * get recent orders
+     * 
+     * @param int $limit
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function recent(int $limit, Request $request)
+    {
+        try {
+            $limit = $limit >= 20 || $limit <= 1 ? 20 : $limit;
+            $inputs = $request->all();
+            $user = Auth::user();
+            $orders = $this->ordersService->recent($limit, $user->role, $user->id, $inputs);
+            return $this->success("orders Retrived",OrderResource::collection($orders));
         } catch (\Exception $e) {
             return $this->failed($e->getMessage());
         }

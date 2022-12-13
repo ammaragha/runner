@@ -27,6 +27,8 @@ class OrderResource extends JsonResource
             "care_for"=>$this->care_for,
             "response"=>$this->response,
             "status"=>$this->status,
+            "deal"=>$this->deal,
+            "properties"=>$this->properties,
             "user"=> new UserResource($this->user),
             "runner"=> new UserResource($this->runner),
             "address"=> new AddressResource($this->address)

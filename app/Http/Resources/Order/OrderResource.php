@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Filament\Resources\ServiceResource;
 use App\Http\Resources\Address\AddressResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,21 +18,22 @@ class OrderResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "id"=>$this->id,
-            "description"=>$this->description,
-            "voice"=>$this->voice,
-            "date"=>$this->date,
-            "time"=>$this->time,
-            "urgent"=>$this->urgent,
-            "complex"=>$this->complex,
-            "care_for"=>$this->care_for,
-            "response"=>$this->response,
-            "status"=>$this->status,
-            "deal"=>$this->deal,
-            "properties"=>$this->properties,
-            "user"=> new UserResource($this->user),
-            "runner"=> new UserResource($this->runner),
-            "address"=> new AddressResource($this->address)
+            "id" => $this->id,
+            "description" => $this->description,
+            "voice" => $this->voice,
+            "date" => $this->date,
+            "time" => $this->time,
+            "urgent" => $this->urgent,
+            "complex" => $this->complex,
+            "care_for" => $this->care_for,
+            "response" => $this->response,
+            "status" => $this->status,
+            "deal" => $this->deal,
+            "properties" => $this->properties,
+            "user" => new UserResource($this->user),
+            "runner" => new UserResource($this->runner),
+            "service" => new ServiceResource($this->service),
+            "address" => new AddressResource($this->address)
         ];
     }
 }

@@ -12,7 +12,8 @@ class Order extends Model
 
     protected $fillable = [
         'description', 'voice', 'date', 'time', 'urgent', 'complex',
-        'care_for', 'response', 'status', 'user_id', 'runner_id', 'address_id', "properties"
+        'care_for', 'response', 'status', "properties",
+        'user_id', 'runner_id', 'address_id', "service_id"
     ];
 
     protected $casts = [
@@ -33,5 +34,10 @@ class Order extends Model
     public function address()
     {
         return $this->belongsTo(Address::class, 'address_id');
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
     }
 }

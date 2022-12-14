@@ -24,9 +24,10 @@ class FindRunnerRequest extends FormRequest
     public function rules()
     {
         return [
-            "min_cost"=>['required'],
-            "max_cost"=>['required'],
-            "address_id"=>['required','exists:addresses,id'],
+            "min_cost" => ['required'],
+            "max_cost" => ['required'],
+            "address_id" => ['required', 'exists:addresses,id'],
+            "service_id" => ['required', 'exists:services,id']
         ];
     }
 }

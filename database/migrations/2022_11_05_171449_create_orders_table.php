@@ -31,6 +31,8 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->nullOnDelete();
             $table->foreignId('runner_id')->nullable()->references('id')->on('users')->nullOnDelete();
             $table->foreignId('address_id')->nullable()->references('id')->on('addresses')->nullOnDelete();
+            $table->foreignId('service_id')->nullable()->references('id')->on('services')->nullOnDelete();
+
         });
     }
 

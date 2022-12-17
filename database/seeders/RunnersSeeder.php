@@ -35,6 +35,18 @@ class RunnersSeeder extends Seeder
                 "cost_per_hour" => fake()->numberBetween(1, 20),
                 "is_active" => fake()->numberBetween(0, 1),
             ]);
+
+            $user->addresses()->create([
+                "name" => "home",
+                "lat" => "10",
+                "long" => "10",
+                "state" => "KFS",
+                "city" => fake()->city(),
+                "street" => fake()->streetAddress(),
+                "suite" => fake()->randomNumber(),
+                "zip" => fake()->randomNumber(),
+                "phone" => $user->phone
+            ]);
         }
     }
 }

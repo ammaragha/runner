@@ -31,7 +31,6 @@ class OrderRequest extends FormRequest
             "urgent" => ['required', 'in:0,1'],
             "complex" => ['required', 'in:0,1'],
             "care_for" => ['required', 'in:experience,cost'],
-            "user_id" => ['required', 'exists:users,id'],
             "runner_id" => ['required', 'exists:users,id'],
             "address_id" => ['required', 'exists:addresses,id']
         ];

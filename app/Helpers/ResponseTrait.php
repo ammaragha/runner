@@ -72,6 +72,8 @@ trait ResponseTrait
             "errors" => array_merge($errorArr, $errors),
         ];
 
+        $code = $code == 0 || $code < 500 ? $code : 500;
+
         return response()->json($responseArray, $code);
     }
 

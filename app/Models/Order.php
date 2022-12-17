@@ -13,6 +13,7 @@ class Order extends Model
     protected $fillable = [
         'description', 'voice', 'date', 'time', 'urgent', 'complex',
         'care_for', 'response', 'status', "properties",
+        'deal', 'end_time', 'end_date',
         'user_id', 'runner_id', 'address_id', "service_id"
     ];
 

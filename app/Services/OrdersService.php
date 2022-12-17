@@ -7,6 +7,7 @@ use App\Repositories\Contracts\OrdersRepository;
 use App\Repositories\Contracts\UsersRepository;
 use App\Services\Interfaces\CRUDServiceInterface;
 use App\Services\Interfaces\OrdersServiceInterface;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,7 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
 
     public function create(array $inputs): Model
     {
-        $inputs['status'] = "pending";
+        $inputs['status'] = "pending_runner";
         return $this->ordersRepository->save($inputs);
     }
 
@@ -60,12 +61,33 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
         return $users->paginate(5, ["users.*"]);
     }
 
-    public function recent(int $limit,string $role ,int $id,array $inputs = []):Collection
+    public function recent(int $limit, string $role, int $id, array $inputs = []): Collection
     {
-        if($role == 'runner'){
-            return $this->ordersRepository->findBy("ruuner_id",$id,"=",$limit);
-        }else{
-            return $this->ordersRepository->findBy("user_id",$id,"=",$limit);
+        if ($role == 'runner') {
+            return $this->ordersRepository->findBy("ruuner_id", $id, "=", $limit);
+        } else {
+            return $this->ordersRepository->findBy("user_id", $id, "=", $limit);
         }
+    }
+
+    public function changeStatus(int $id, string $status, array $inputs): bool
+    {
+        $order = $this->read($id);
+
+        if (in_array($order->status, ['rejected', 'done']))
+            return false;
+
+        $properties = $order->properties;
+        $properties["{$status}_at"] = Carbon::now();
+
+        if ($status === "pending_user") {
+            $data['deal'] = $inputs['deal'];
+            $data['end_time'] = $inputs['end_time'];
+        }
+        $data['status'] = $inputs['status'];
+        $data['properties'] = $properties;
+        $updated = $this->ordersRepository->update($order, $data);
+
+        return $updated;
     }
 }

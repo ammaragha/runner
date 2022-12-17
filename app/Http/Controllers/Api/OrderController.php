@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ResponseTrait;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Order\ChangeStatusRequest;
 use App\Http\Requests\Order\FindRunnerRequest;
 use App\Http\Requests\Order\OrderRequest;
 use App\Http\Resources\Order\OrderResource;
@@ -40,6 +41,7 @@ class OrderController extends Controller
     {
         try {
             $inputs = $request->all();
+            $inputs['user_id'] = Auth::user()->id;
             $order = $this->ordersService->create($inputs);
             return $this->createdSuccessfully("Order saved successfully", new OrderResource($order));
         } catch (\Exception $e) {
@@ -116,9 +118,27 @@ class OrderController extends Controller
             $inputs = $request->all();
             $user = Auth::user();
             $orders = $this->ordersService->recent($limit, $user->role, $user->id, $inputs);
-            return $this->success("orders Retrived",OrderResource::collection($orders));
+            return $this->success("orders Retrived", OrderResource::collection($orders));
         } catch (\Exception $e) {
             return $this->failed($e->getMessage());
+        }
+    }
+
+    /**
+     * Change status of order
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function changeStatus(int $id, ChangeStatusRequest $request)
+    {
+        try {
+            $status = $request->input('status');
+            $inputs = $request->all();
+            $changed = $this->ordersService->changeStatus($id, $status, $inputs);
+            return $this->bool($changed, "Status Changed", "Status not able to change");
+        } catch (\Exception $e) {
+            return $this->failed($e->getMessage(), $e->getCode());
         }
     }
 }

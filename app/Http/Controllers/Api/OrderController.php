@@ -89,11 +89,11 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function findRunner(FindRunnerRequest $request)
+    public function findRunner(int $limit,FindRunnerRequest $request)
     {
         try {
             $inputs = $request->all();
-            $runners = $this->ordersService->findRunner($inputs);
+            $runners = $this->ordersService->findRunner($limit,$inputs);
             $metaData = [
                 "count" => $runners->toArray()['total'],
                 "totalPages" => $runners->toArray()['last_page']

@@ -50,7 +50,7 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
         return $this->ordersRepository->delete($order);
     }
 
-    public function findRunner(array $inputs): LengthAwarePaginator
+    public function findRunner(int $limit,array $inputs): LengthAwarePaginator
     {
         $address_id = $inputs['address_id'];
         $address = $this->addressesRepository->findById($address_id);
@@ -58,7 +58,7 @@ class OrdersService implements CRUDServiceInterface, OrdersServiceInterface
         $inputs['state'] = $address->state;
         $users = $this->usersRepository->getRunnerUsersForOrder("id", "ASC", $inputs);
 
-        return $users->paginate(5, ["users.*"]);
+        return $users->paginate($limit, ["users.*"]);
     }
 
     public function recent(int $limit, string $role, int $id, array $inputs = []): Collection

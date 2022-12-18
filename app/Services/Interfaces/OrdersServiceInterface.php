@@ -8,6 +8,6 @@ use Illuminate\Support\Collection;
 
 interface OrdersServiceInterface
 {
-    public function findRunner(array $inputs): LengthAwarePaginator;
+    public function findRunner(int $limit,array $inputs): LengthAwarePaginator;
     public function recent(int $limie, string $role, int $id, array $inputs): Collection;
 }
